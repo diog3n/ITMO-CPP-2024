@@ -24,6 +24,7 @@ std::ostream& GenerateTestCaseBlock(
 		const std::vector<StringType>& var_names,
 		const std::vector<StringType>& expressions,
 		int indentation_level ) {
+
 	using namespace std;
 	using namespace Utils::String;
 
@@ -58,6 +59,7 @@ template<typename StringType> void GenerateTestFunction(
 		const std::vector<std::vector<StringType>>& initial_values,
 		const std::vector<StringType>& var_names,
 		const std::vector<StringType>& expressions) {
+
 	using namespace std;
 	out 	<< "void " << function_name << "() {" << endl;
 

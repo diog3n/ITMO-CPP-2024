@@ -21,6 +21,12 @@ const string
 NOT_ENOUGH_INIT_VALS_MSG = "Amount of initial values must be more or equal "
 		"to the amount of declared variable names";
 
+const string NO_EXPRESSIONS_MSG = "No expressions given";
+
+const string NO_VAR_NAMES_MSG = "No variable names were given";
+
+const string NO_TYPES_GIVEN_MSG = "No type names were given";
+
 string MakeExceptionString(int line, const string& message) {
 	using namespace literals;
 	return "line: "s + to_string(line) + ", "s + message;
@@ -103,6 +109,21 @@ FunctionGenerator::ParseInstructions(istream& in) {
 				MakeExceptionString(line_counter,
 						NOT_ENOUGH_INIT_VALS_MSG));
 	}
+
+	if (parse_data.expressions.empty())
+		throw invalid_argument(
+			MakeExceptionString(line_counter,
+					NO_EXPRESSIONS_MSG));
+
+	if (parse_data.types.empty())
+		throw invalid_argument(
+			MakeExceptionString(line_counter,
+					NO_TYPES_GIVEN_MSG));
+
+	if (parse_data.var_names.empty())
+		throw invalid_argument(
+			MakeExceptionString(line_counter,
+					NO_VAR_NAMES_MSG));
 
 	return parse_data;
 }

@@ -3,6 +3,7 @@
 #include <cerrno>
 #include <fstream>
 #include <iostream>
+#include <stdexcept>
 #include <string_view>
 
 int GenerateComplexTestFunctionMain(int argc, char **argv) {
@@ -18,7 +19,14 @@ int GenerateComplexTestFunctionMain(int argc, char **argv) {
 		return ENOENT;
 	}
 
-	ParseData pd = ParseInstructions(fin);
+	ParseData pd;
+
+	try {
+		pd = ParseInstructions(fin);
+	} catch (invalid_argument& e) {
+		std::cerr << e.what() << std::endl;
+		return 1;
+	}
 
 	fout << "#include <iostream>" << endl;
 	fout << endl;
@@ -72,8 +80,11 @@ int GenerateSimpleTestFunctionMain(int argc, char **argv) {
 	fout << endl;
 
 	FunctionGenerator::GenerateTestFunction(fout, "TestFunction",
-			type_tokens, values_tokens, vector<string_view>{ "var1", "var2" },
-			vector<string_view>{
+			type_tokens, values_tokens,
+			vector<string_view> {
+				"var1", "var2"
+			},
+			vector<string_view> {
 				"var1 + var2",
 				"var1 - var2",
 				"var1 / var2",
