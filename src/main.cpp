@@ -3,6 +3,7 @@
 #include <cerrno>
 #include <fstream>
 #include <iostream>
+#include <string_view>
 
 int GenerateComplexTestFunctionMain(int argc, char **argv) {
 	using namespace std;
@@ -22,7 +23,7 @@ int GenerateComplexTestFunctionMain(int argc, char **argv) {
 	fout << "#include <iostream>" << endl;
 	fout << endl;
 
-	GenerateComplexTestFunction(fout, "TestFunction",
+	GenerateTestFunction(fout, "TestFunction",
 			pd.types,
 			pd.init_values,
 			pd.var_names,
@@ -34,6 +35,7 @@ int GenerateComplexTestFunctionMain(int argc, char **argv) {
 int GenerateSimpleTestFunctionMain(int argc, char **argv) {
 	using namespace std;
 	using namespace Utils::View;
+	using namespace FunctionGenerator;
 
 	ofstream fout(argv[1]);
 
@@ -52,14 +54,13 @@ int GenerateSimpleTestFunctionMain(int argc, char **argv) {
 	values_tokens_unpaired = SplitBy(in_values_line, ',',
 			TRIM_SPACES);
 
-	vector<FunctionGenerator::InitialValueTokens> values_tokens;
+	vector<InitialValueTokens<string_view>> values_tokens;
 
 	for (string_view value_pair : values_tokens_unpaired) {
 		vector<string_view>
-		pair_vector = SplitBy(value_pair, ' ', TRIM_SPACES);
+		init_vector = SplitBy(value_pair, ' ', TRIM_SPACES);
 
-		values_tokens.emplace_back(pair_vector.at(0),
-				pair_vector.at(1));
+		values_tokens.emplace_back(std::move(init_vector));
 	}
 
 	if (values_tokens.size() != type_tokens.size()) {
@@ -70,8 +71,14 @@ int GenerateSimpleTestFunctionMain(int argc, char **argv) {
 	fout << "#include <iostream>" << endl;
 	fout << endl;
 
-	FunctionGenerator::GenerateSimpleTestFunction(fout, "TestFunction",
-			type_tokens, values_tokens);
+	FunctionGenerator::GenerateTestFunction(fout, "TestFunction",
+			type_tokens, values_tokens, vector<string_view>{ "var1", "var2" },
+			vector<string_view>{
+				"var1 + var2",
+				"var1 - var2",
+				"var1 / var2",
+				"var1 * var2"
+			});
 
 	return 0;
 }

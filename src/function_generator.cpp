@@ -1,12 +1,9 @@
 #include "function_generator.hpp"
 #include <sstream>
 #include <stdexcept>
+#include <string>
 
 using namespace std;
-
-const vector<string> FunctionGenerator::arithmetic_operations = {
-	"+", "-", "/", "*",
-};
 
 const string
 EXPECTED_VAR_MSG = "Expected variable definition after the \"var\" keyword";
@@ -108,108 +105,4 @@ FunctionGenerator::ParseInstructions(istream& in) {
 	}
 
 	return parse_data;
-}
-
-string GetIndentation(int level) {
-	return string(level, '\t');
-}
-
-ostream& GenerateSimpleTestCaseBlock(
-		ostream& out, string_view type,
-		const FunctionGenerator::InitialValueTokens& init_values,
-		const vector<string>& operations,
-		int indentation_level = 0) {
-
-	const string var1_name = "var1";
-	const string var2_name = "var2";
-
-	out	<< GetIndentation(indentation_level) << "{" << endl;
-
-	++indentation_level;
-
-	out	<< GetIndentation(indentation_level)
-		<< type << " " << var1_name << " = "
-		<< init_values.first << ";" << endl;
-
-	out	<< GetIndentation(indentation_level)
-		<< type << " " << var2_name << " = "
-		<< init_values.second << ";" << endl;
-
-	for (const string& operation : operations) {
-		out	<< GetIndentation(indentation_level)
-			<< "std::cout << " << var1_name << " "
-			<< operation << " " << var2_name << " << std::endl;"
-			<< endl;
-	}
-
-	--indentation_level;
-
-	out << GetIndentation(indentation_level) << "}";
-
-	return out;
-}
-
-void
-FunctionGenerator::GenerateSimpleTestFunction(
-		ostream& out, const string& function_name,
-		const vector<string_view>& types,
-		const vector<InitialValueTokens>& initial_values) {
-	out 	<< "void " << function_name << "() {" << endl;
-
-	for ( int i = 0; i < types.size() && initial_values.size(); i++) {
-		GenerateSimpleTestCaseBlock(out, types.at(i),
-				initial_values.at(i),
-				arithmetic_operations, 1) << endl;
-	}
-
-	out << "}" << endl;
-}
-
-ostream& GenerateComplexTestCaseBlock(
-		ostream& out, string_view type,
-		const vector<string>& init_values,
-		const vector<string>& var_names,
-		const vector<string>& expressions,
-		int indentation_level ) {
-
-	out	<< GetIndentation(indentation_level) << "{" << endl;
-
-	++indentation_level;
-
-	// Задает переменные
-	for (size_t i = 0; i < var_names.size() && i < init_values.size(); i++) {
-		out	<< GetIndentation(indentation_level)
-			<< type << " " << var_names.at(i) << " = "
-			<< init_values.at(i) << ";" << endl;
-	}
-
-	// Выводит выражения
-	for (const std::string& expr : expressions) {
-		out	<< GetIndentation(indentation_level)
-			<< "std::cout <<" << " \"" << expr << " = \" << "
-			<< expr << " << std::endl;" << endl;
-	}
-
-	--indentation_level;
-
-	out << GetIndentation(indentation_level) << "}" << endl;
-
-	return out;
-}
-
-void FunctionGenerator::GenerateComplexTestFunction(
-		ostream& out, const string& function_name,
-		const vector<string>& types,
-		const vector<vector<string>>& initial_values,
-		const vector<string> var_names,
-		const vector<string> expressions) {
-	out 	<< "void " << function_name << "() {" << endl;
-
-	for (size_t i = 0; i < types.size() && i < initial_values.size(); i++) {
-		GenerateComplexTestCaseBlock(out, types.at(i),
-				initial_values.at(i),
-				var_names, expressions, 1) << endl;
-	}
-
-	out << "}" << endl;
 }

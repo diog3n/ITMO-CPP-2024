@@ -16,6 +16,13 @@ std::string_view Trim(std::string_view view, char to_trim);
 
 std::string_view Subview(std::string_view view, size_t start, size_t end);
 
-} // namespace View;
+} // namespace View
 
-} // namespace Utils;
+namespace String {
+
+std::string GetIndentation(int level);
+
+} // namespace String
+
+
+} // namespace Utils

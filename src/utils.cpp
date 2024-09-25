@@ -47,3 +47,7 @@ Utils::View::SplitBy(std::string_view line, char by, bool trim_spaces) {
 	}
 	return result;
 }
+
+std::string Utils::String::GetIndentation(int level) {
+	return std::string(level, '\t');
+}
