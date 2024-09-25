@@ -137,8 +137,8 @@ ostream& GenerateSimpleTestCaseBlock(
 
 	for (const string& operation : operations) {
 		out	<< GetIndentation(indentation_level)
-			<< "cout << " << var1_name << " "
-			<< operation << " " << var2_name << " << endl;"
+			<< "std::cout << " << var1_name << " "
+			<< operation << " " << var2_name << " << std::endl;"
 			<< endl;
 	}
 
